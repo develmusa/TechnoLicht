@@ -1,0 +1,13 @@
+[Unit]
+Description=UPS HAT Battery Monitor
+After=multi-user.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /home/pi/TechnoLicht/scripts/power-monitor.py
+Restart=always
+RestartSec=30
+User=pi
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,95 @@
+connectors:
+  Battery:
+    type: XT60
+    pins: [VCC, GND]
+    pinlabels: [14.4V, GND]
+  Buck_12V:
+    type: WG8-36s1225
+    pins: [VIN+, VIN-, VOUT+, VOUT-]
+    pinlabels: [14.4V_IN, GND_IN, 12V_OUT, GND_OUT]
+  Buck_5V:
+    type: DC-DC_50W
+    pins: [VIN+, VIN-, VOUT+, VOUT-]
+    pinlabels: [12V_IN, GND_IN, 5V_OUT, GND_OUT]
+  USB_Charger:
+    type: USB_5V_to_8.4V
+    pins: [USB_5V, USB_GND, DC_8.4V, DC_GND]
+    pinlabels: [5V_IN, GND_IN, 8.4V_OUT, GND_OUT]
+  QuinLED_Power:
+    type: Power_7HC
+    pins: [12V, GND]
+    pinlabels: [12V_RAIL, GND_RAIL]
+  QuinLED_Logic:
+    type: Dig_Octa
+    pins: [VCC, GND]
+    pinlabels: [12V_LOGIC, GND_LOGIC]
+  RPi:
+    type: RPi4B_GPIO
+    pins: [5V, GND]
+    pinlabels: [5V_IN, GND_IN]
+  RPi_USB_C:
+    type: USB_C
+    pins: [VCC, GND]
+    pinlabels: [5V_IN, GND_IN]
+  UPS_HAT:
+    type: Waveshare_UPS
+    pins: [CHG_8.4V, GND, GPIO_5V, GPIO_GND]
+    pinlabels: [CHARGE_IN, GND, PI_5V, PI_GND]
+
+cables:
+  Battery_Main:
+    wirecount: 2
+    gauge: 10 AWG
+    color_code: DIN
+    colors: [RD, BK]
+  Rail_12V:
+    wirecount: 2
+    gauge: 12 AWG
+    color_code: DIN
+    colors: [YE, BK]
+  Rail_5V:
+    wirecount: 2
+    gauge: 16 AWG
+    color_code: DIN
+    colors: [RD, BK]
+  Charger_Cable:
+    wirecount: 2
+    gauge: 22 AWG
+    color_code: DIN
+    colors: [RD, BK]
+
+connections:
+  - # Battery to 12V Buck
+    - Battery: [VCC, GND]
+    - Battery_Main: [RD, BK]
+    - Buck_12V: [VIN+, VIN-]
+
+  - # 12V Buck to 12V Rail Distribution
+    - Buck_12V: [VOUT+, VOUT-]
+    - Rail_12V: [YE, BK]
+    - QuinLED_Power: [12V, GND]
+
+  - # 12V Buck to 5V Buck input
+    - Buck_12V: [VOUT+, VOUT-]
+    - Rail_12V: [YE, BK]
+    - Buck_5V: [VIN+, VIN-]
+
+  - # 5V Buck to RPi
+    - Buck_5V: [VOUT+, VOUT-]
+    - Rail_5V: [RD, BK]
+    - RPi_USB_C: [VCC, GND]
+
+  - # 5V Buck to USB Charger
+    - Buck_5V: [VOUT+, VOUT-]
+    - Rail_5V: [RD, BK]
+    - USB_Charger: [USB_5V, USB_GND]
+
+  - # USB Charger to UPS HAT
+    - USB_Charger: [DC_8.4V, DC_GND]
+    - Charger_Cable: [RD, BK]
+    - UPS_HAT: [CHG_8.4V, GND]
+
+  - # UPS HAT to RPi GPIO (power + I2C)
+    - UPS_HAT: [GPIO_5V, GPIO_GND]
+    - Charger_Cable: [RD, BK]
+    - RPi: [5V, GND]

@@ -1,0 +1,76 @@
+connectors:
+  RPi_Eth:
+    type: RJ45
+    pins: [TX+, TX-, RX+, RX-]
+    pinlabels: [Eth_TX+, Eth_TX-, Eth_RX+, Eth_RX-]
+  QuinLED_Eth:
+    type: RJ45
+    pins: [TX+, TX-, RX+, RX-]
+    pinlabels: [Eth_TX+, Eth_TX-, Eth_RX+, Eth_RX-]
+  RPi_USB_Audio:
+    type: USB_A
+    pins: [VCC, D-, D+, GND]
+    pinlabels: [5V, USB_DM, USB_DP, GND]
+  Sound_Card:
+    type: USB_Mini
+    pins: [VCC, D-, D+, GND]
+    pinlabels: [5V, USB_DM, USB_DP, GND]
+  RPi_GPIO:
+    type: RPi_40Pin
+    pins: [3V3, SDA, SCL, 5V, GND]
+    pinlabels: [3.3V, I2C_SDA, I2C_SCL, 5V, GND]
+  UPS_HAT_GPIO:
+    type: HAT_40Pin
+    pins: [3V3, SDA, SCL, 5V, GND]
+    pinlabels: [3.3V, I2C_SDA, I2C_SCL, 5V, GND]
+  Amp_LineOut:
+    type: 3.5mm_TRS
+    pins: [T, R, S]
+    pinlabels: [Left, Right, GND]
+  Sound_Card_LineIn:
+    type: 3.5mm_TRS
+    pins: [T, R, S]
+    pinlabels: [Left, Right, GND]
+
+cables:
+  Ethernet_Cable:
+    wirecount: 4
+    gauge: 24 AWG
+    color_code: T568B
+    colors: [OG, OG_WH, GN, GN_WH]
+  USB_Audio_Cable:
+    wirecount: 4
+    gauge: 24 AWG
+    color_code: USB
+    colors: [RD, WH, GN, BK]
+  I2C_Ribbon:
+    wirecount: 5
+    gauge: 26 AWG
+    color_code: DIN
+    colors: [OG, YE, GN, RD, BK]
+  Audio_Line:
+    wirecount: 3
+    gauge: 22 AWG
+    color_code: TRS
+    colors: [RD, WH, BK]
+
+connections:
+  - # RPi to QuinLED Ethernet
+    - RPi_Eth: [TX+, TX-, RX+, RX-]
+    - Ethernet_Cable: [OG, OG_WH, GN, GN_WH]
+    - QuinLED_Eth: [TX+, TX-, RX+, RX-]
+
+  - # RPi USB to Sound Card
+    - RPi_USB_Audio: [VCC, D-, D+, GND]
+    - USB_Audio_Cable: [RD, WH, GN, BK]
+    - Sound_Card: [VCC, D-, D+, GND]
+
+  - # RPi GPIO to UPS HAT (I2C + Power)
+    - RPi_GPIO: [3V3, SDA, SCL, 5V, GND]
+    - I2C_Ribbon: [OG, YE, GN, RD, BK]
+    - UPS_HAT_GPIO: [3V3, SDA, SCL, 5V, GND]
+
+  - # Amp line-out to Sound Card line-in
+    - Amp_LineOut: [T, R, S]
+    - Audio_Line: [RD, WH, BK]
+    - Sound_Card_LineIn: [T, R, S]

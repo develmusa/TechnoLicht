@@ -1,0 +1,105 @@
+connectors:
+  QuinLED_Out0:
+    type: Dig_Octa_Output
+    pins: [GND, 12V, DATA]
+    pinlabels: [GND, 12V, D0]
+  QuinLED_Out1:
+    type: Dig_Octa_Output
+    pins: [GND, 12V, DATA]
+    pinlabels: [GND, 12V, D1]
+  QuinLED_Out2:
+    type: Dig_Octa_Output
+    pins: [GND, 12V, DATA]
+    pinlabels: [GND, 12V, D2]
+  QuinLED_Out3:
+    type: Dig_Octa_Output
+    pins: [GND, 12V, DATA]
+    pinlabels: [GND, 12V, D3]
+  Strip_1_Start:
+    type: WS2815_4Pin
+    pins: [GND, 12V, DI, BI]
+    pinlabels: [GND, 12V, DATA_IN, BACKUP_IN]
+  Strip_2_Start:
+    type: WS2815_4Pin
+    pins: [GND, 12V, DI, BI]
+    pinlabels: [GND, 12V, DATA_IN, BACKUP_IN]
+  Strip_3_Start:
+    type: WS2815_4Pin
+    pins: [GND, 12V, DI, BI]
+    pinlabels: [GND, 12V, DATA_IN, BACKUP_IN]
+  Strip_4_Start:
+    type: WS2815_4Pin
+    pins: [GND, 12V, DI, BI]
+    pinlabels: [GND, 12V, DATA_IN, BACKUP_IN]
+  GND_Junction:
+    type: Junction
+    pins: [GND_1, GND_2, GND_3, GND_4]
+    pinlabels: [GND, GND, GND, GND]
+
+cables:
+  LED_Data_0:
+    wirecount: 3
+    gauge: 18 AWG
+    color_code: DIN
+    colors: [BK, RD, GN]
+  LED_Data_1:
+    wirecount: 3
+    gauge: 18 AWG
+    color_code: DIN
+    colors: [BK, RD, YE]
+  LED_Data_2:
+    wirecount: 3
+    gauge: 18 AWG
+    color_code: DIN
+    colors: [BK, RD, BU]
+  LED_Data_3:
+    wirecount: 3
+    gauge: 18 AWG
+    color_code: DIN
+    colors: [BK, RD, WH]
+  BI_Jumper:
+    wirecount: 1
+    gauge: 26 AWG
+    color_code: DIN
+    colors: [BK]
+
+connections:
+  - # Output 0 -> Strip 1 (10m)
+    - QuinLED_Out0: [GND, 12V, DATA]
+    - LED_Data_0: [BK, RD, GN]
+    - Strip_1_Start: [GND, 12V, DI]
+
+  - # BI tied to GND at Strip 1 start
+    - Strip_1_Start: [BI]
+    - BI_Jumper: [BK]
+    - Strip_1_Start: [GND]
+
+  - # Output 1 -> Strip 2 (10m)
+    - QuinLED_Out1: [GND, 12V, DATA]
+    - LED_Data_1: [BK, RD, YE]
+    - Strip_2_Start: [GND, 12V, DI]
+
+  - # BI tied to GND at Strip 2 start
+    - Strip_2_Start: [BI]
+    - BI_Jumper: [BK]
+    - Strip_2_Start: [GND]
+
+  - # Output 2 -> Strip 3 (10m)
+    - QuinLED_Out2: [GND, 12V, DATA]
+    - LED_Data_2: [BK, RD, BU]
+    - Strip_3_Start: [GND, 12V, DI]
+
+  - # BI tied to GND at Strip 3 start
+    - Strip_3_Start: [BI]
+    - BI_Jumper: [BK]
+    - Strip_3_Start: [GND]
+
+  - # Output 3 -> Strip 4 (10m)
+    - QuinLED_Out3: [GND, 12V, DATA]
+    - LED_Data_3: [BK, RD, WH]
+    - Strip_4_Start: [GND, 12V, DI]
+
+  - # BI tied to GND at Strip 4 start
+    - Strip_4_Start: [BI]
+    - BI_Jumper: [BK]
+    - Strip_4_Start: [GND]

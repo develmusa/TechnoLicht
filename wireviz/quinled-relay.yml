@@ -1,0 +1,42 @@
+connectors:
+  QuinLED_Out7:
+    type: Dig_Octa_Output
+    pins: [GND, VCC, RELAY]
+    pinlabels: [GND, 12V, RELAY_SIGNAL]
+  SSR_Input:
+    type: ZGT_25_DD
+    pins: [CTRL+, CTRL-]
+    pinlabels: [DC_Plus, DC_Minus]
+  Strobe_12V:
+    type: Strobe_Light
+    pins: [VCC, GND]
+    pinlabels: [12V_IN, GND]
+  Rail_12V:
+    type: Power_Rail
+    pins: [VCC, GND]
+    pinlabels: [12V, GND]
+
+cables:
+  Relay_Control:
+    wirecount: 2
+    gauge: 22 AWG
+    color_code: DIN
+    colors: [RD, BK]
+  Strobe_Power:
+    wirecount: 2
+    gauge: 18 AWG
+    color_code: DIN
+    colors: [RD, BK]
+
+connections:
+  - # QuinLED relay output to SSR control
+    - QuinLED_Out7: [RELAY, GND]
+    - Relay_Control: [RD, BK]
+    - SSR_Input: [CTRL+, CTRL-]
+
+  - # 12V rail to strobe power (through SSR)
+    - Rail_12V: [VCC, GND]
+    - Strobe_Power: [RD, BK]
+    - SSR_Input: [CTRL+, CTRL-]
+    # Note: SSR output terminals connect to Strobe_12V
+    # This is represented as a continuation in physical build

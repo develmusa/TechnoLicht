@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Audio System Diagram</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0f1117;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: 'DM Sans', sans-serif;
+    color: #e2e4e9;
+  }
+  svg {
+    width: 100%;
+    max-width: 1100px;
+    height: auto;
+  }
+  .label { font-family: 'DM Sans', sans-serif; fill: #e2e4e9; }
+  .label-sm { font-size: 11px; fill: #8b8fa3; }
+  .label-md { font-size: 13px; fill: #c4c7d0; font-weight: 500; }
+  .label-lg { font-size: 15px; fill: #e2e4e9; font-weight: 700; }
+  .label-title { font-size: 18px; fill: #fff; font-weight: 700; letter-spacing: 0.5px; }
+  .mono { font-family: 'JetBrains Mono', monospace; font-size: 11px; fill: #6ee7b7; }
+  .box { fill: #1a1d27; stroke: #2a2d3a; stroke-width: 1.5; rx: 8; }
+  .box-accent { fill: #1e2233; stroke: #3b5bdb; stroke-width: 1.5; rx: 8; }
+  .box-sub { fill: #161922; stroke: #2a2d3a; stroke-width: 1; rx: 6; }
+  .line { stroke: #3b5bdb; stroke-width: 2; fill: none; }
+  .line-dot { stroke: #f59f00; stroke-width: 1.5; fill: none; stroke-dasharray: 6 4; }
+  .line-lp { stroke: #e03131; stroke-width: 2; fill: none; }
+  .arrow { fill: #3b5bdb; }
+  .arrow-lp { fill: #e03131; }
+  .speaker-cone { fill: none; stroke: #4a4e63; stroke-width: 1.5; }
+  .speaker-dot { fill: #4a4e63; }
+  .tag { font-family: 'JetBrains Mono', monospace; font-size: 10px; }
+  .tag-hp { fill: #6ee7b7; }
+  .tag-fr { fill: #f59f00; }
+  .tag-lp { fill: #e03131; }
+  .q-mark { font-size: 22px; fill: #f59f00; font-weight: 700; }
+</style>
+</head>
+<body>
+<svg viewBox="0 0 1050 680" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- Title -->
+  <text x="525" y="34" text-anchor="middle" class="label label-title">ABGESTIMMTES SYSTEM</text>
+  <line x1="400" y1="44" x2="650" y2="44" stroke="#2a2d3a" stroke-width="1"/>
+
+  <!-- ===== AUX IN ===== -->
+  <text x="140" y="90" text-anchor="middle" class="label label-md">AUX IN</text>
+  <line x1="140" y1="98" x2="140" y2="155" class="line"/>
+  <polygon points="135,153 145,153 140,163" class="arrow"/>
+
+  <!-- ===== 4-CHANNEL AMP ===== -->
+  <rect x="50" y="165" width="260" height="200" class="box-accent"/>
+  <text x="180" y="188" text-anchor="middle" class="label label-lg">4-KANAL VERSTÄRKER</text>
+  <line x1="70" y1="196" x2="290" y2="196" stroke="#2a2d3a" stroke-width="1"/>
+
+  <!-- Kanal 1+2 -->
+  <rect x="70" y="206" width="220" height="68" class="box-sub"/>
+  <text x="180" y="224" text-anchor="middle" class="label label-md">KANAL 1+2</text>
+  <text x="100" y="244" class="tag tag-hp">HP</text>
+  <rect x="130" y="234" width="90" height="18" rx="3" fill="#f59f00" opacity="0.15" stroke="#f59f00" stroke-width="1"/>
+  <text x="175" y="247" text-anchor="middle" class="tag tag-fr">FULL RANGE</text>
+  <text x="240" y="264" class="tag tag-lp">LP</text>
+
+  <!-- Kanal 3+4 -->
+  <rect x="70" y="284" width="220" height="68" class="box-sub"/>
+  <text x="180" y="302" text-anchor="middle" class="label label-md">KANAL 3+4</text>
+  <text x="100" y="322" class="tag tag-hp">HP</text>
+  <text x="145" y="322" class="tag tag-fr">FULL RANGE</text>
+  <rect x="210" y="332" width="30" height="14" rx="3" fill="#e03131" opacity="0.2" stroke="#e03131" stroke-width="1"/>
+  <text x="225" y="343" text-anchor="middle" class="tag tag-lp">LP</text>
+
+  <!-- Left note -->
+  <text x="40" y="400" class="label label-sm">Alle 4 Kanäle einstellbar</text>
+  <text x="40" y="416" class="label label-sm">auf Kanalpaare 1+2 &amp; 3+4</text>
+  <text x="40" y="432" class="label label-sm">FULL / LP / HP</text>
+
+  <!-- ===== LINES TO SPEAKERS ===== -->
+  <!-- L FULL -->
+  <line x1="310" y1="235" x2="420" y2="235" class="line"/>
+  <polygon points="418,230 418,240 428,235" class="arrow"/>
+  <text x="365" y="228" text-anchor="middle" class="mono">L FULL</text>
+
+  <!-- R FULL -->
+  <line x1="310" y1="260" x2="420" y2="260" class="line"/>
+  <polygon points="418,255 418,265 428,260" class="arrow"/>
+  <text x="365" y="278" text-anchor="middle" class="mono">R FULL</text>
+
+  <!-- ===== SUBWOOFER BOX ===== -->
+  <rect x="430" y="195" width="280" height="120" class="box"/>
+  <text x="570" y="220" text-anchor="middle" class="label label-lg">SUBWOOFER</text>
+  <text x="570" y="238" text-anchor="middle" class="label label-sm">MIT FREQUENZWEICHE</text>
+
+  <!-- Sub woofer cones -->
+  <circle cx="495" cy="280" r="26" class="speaker-cone"/>
+  <circle cx="495" cy="280" r="10" class="speaker-cone"/>
+  <circle cx="495" cy="280" r="3" class="speaker-dot"/>
+  <circle cx="645" cy="280" r="26" class="speaker-cone"/>
+  <circle cx="645" cy="280" r="10" class="speaker-cone"/>
+  <circle cx="645" cy="280" r="3" class="speaker-dot"/>
+
+  <!-- Cutoff Frequenz ? -->
+  <text x="750" y="250" class="label label-md" fill="#f59f00">Cutoff Frequenz</text>
+  <text x="860" y="250" class="q-mark">?</text>
+
+  <!-- ===== HIGHPASS OUTPUTS TO TWEETERS ===== -->
+  <!-- Highpass L -->
+  <line x1="510" y1="195" x2="510" y2="110" class="line-dot"/>
+  <polygon points="505,112 515,112 510,102" fill="#f59f00"/>
+  <text x="510" y="140" text-anchor="middle" class="tag tag-hp" style="font-size:12px">Highpass L</text>
+
+  <!-- Highpass R -->
+  <line x1="660" y1="195" x2="660" y2="110" class="line-dot"/>
+  <polygon points="655,112 665,112 660,102" fill="#f59f00"/>
+  <text x="660" y="140" text-anchor="middle" class="tag tag-hp" style="font-size:12px">Highpass R</text>
+
+  <!-- ===== SATELLITE SPEAKERS (top) ===== -->
+  <!-- Left speaker -->
+  <rect x="475" y="55" width="70" height="48" class="box"/>
+  <circle cx="510" cy="72" r="8" class="speaker-cone"/>
+  <circle cx="510" cy="72" r="3" class="speaker-dot"/>
+  <circle cx="510" cy="92" r="5" class="speaker-cone"/>
+  <circle cx="510" cy="92" r="2" class="speaker-dot"/>
+  <text x="510" y="118" text-anchor="middle" class="label label-sm">L</text>
+
+  <!-- Right speaker -->
+  <rect x="625" y="55" width="70" height="48" class="box"/>
+  <circle cx="660" cy="72" r="8" class="speaker-cone"/>
+  <circle cx="660" cy="72" r="3" class="speaker-dot"/>
+  <circle cx="660" cy="92" r="5" class="speaker-cone"/>
+  <circle cx="660" cy="92" r="2" class="speaker-dot"/>
+  <text x="660" y="118" text-anchor="middle" class="label label-sm">R</text>
+
+  <!-- ===== LOWPASS OUTPUT TO STANDALONE SUB ===== -->
+  <path d="M 180,365 L 180,500 L 420,500" class="line-lp"/>
+  <polygon points="418,495 418,505 428,500" class="arrow-lp"/>
+  <text x="300" y="490" text-anchor="middle" class="mono" style="fill:#e03131">Lowpass</text>
+
+  <!-- Cutoff einstellbar label -->
+  <text x="180" y="540" text-anchor="middle" class="label label-sm" fill="#e03131">Cutoff einstellbar</text>
+
+  <!-- LP curve illustration -->
+  <rect x="110" y="555" width="80" height="55" class="box-sub"/>
+  <polyline points="115,605 140,605 155,580 185,560" stroke="#e03131" stroke-width="2" fill="none"/>
+  <text x="145" y="620" text-anchor="middle" class="label label-sm" fill="#666">f →</text>
+
+  <!-- ===== STANDALONE SUBWOOFER ===== -->
+  <rect x="440" y="460" width="100" height="100" class="box"/>
+  <circle cx="490" cy="510" r="32" class="speaker-cone"/>
+  <circle cx="490" cy="510" r="12" class="speaker-cone"/>
+  <circle cx="490" cy="510" r="4" class="speaker-dot"/>
+
+  <!-- Question mark -->
+  <text x="580" y="520" class="q-mark">?</text>
+
+  <!-- ===== LEGEND ===== -->
+  <rect x="780" y="400" width="240" height="120" class="box-sub"/>
+  <text x="900" y="422" text-anchor="middle" class="label label-md">Legende</text>
+  <line x1="830" y1="440" x2="860" y2="440" class="line"/>
+  <text x="870" y="444" class="label label-sm">Full Range Signal</text>
+  <line x1="830" y1="462" x2="860" y2="462" class="line-dot"/>
+  <text x="870" y="466" class="label label-sm">Highpass Signal</text>
+  <line x1="830" y1="484" x2="860" y2="484" class="line-lp"/>
+  <text x="870" y="488" class="label label-sm">Lowpass Signal</text>
+  <rect x="830" y="498" width="12" height="12" rx="2" fill="#f59f00" opacity="0.15" stroke="#f59f00" stroke-width="1"/>
+  <text x="870" y="508" class="label label-sm">Aktive Einstellung</text>
+
+</svg>
+</body>
+</html>

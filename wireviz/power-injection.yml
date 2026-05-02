@@ -1,0 +1,97 @@
+connectors:
+  Strip_1_Start:
+    type: WS2815_3Pin
+    pins: [GND, 12V, DI]
+    pinlabels: [GND, 12V, DATA_IN]
+  Strip_1_Mid:
+    type: WS2815_3Pin
+    pins: [GND, 12V, DI]
+    pinlabels: [GND, 12V, DATA_IN]
+  Strip_1_End:
+    type: WS2815_3Pin
+    pins: [GND, 12V, DI]
+    pinlabels: [GND, 12V, DATA_IN]
+  Strip_2_Start:
+    type: WS2815_3Pin
+    pins: [GND, 12V, DI]
+    pinlabels: [GND, 12V, DATA_IN]
+  Strip_2_Mid:
+    type: WS2815_3Pin
+    pins: [GND, 12V, DI]
+    pinlabels: [GND, 12V, DATA_IN]
+  Strip_2_End:
+    type: WS2815_3Pin
+    pins: [GND, 12V, DI]
+    pinlabels: [GND, 12V, DATA_IN]
+  Power_Injection_1:
+    type: Power_Tap
+    pins: [GND, 12V]
+    pinlabels: [GND, 12V]
+  Power_Injection_2:
+    type: Power_Tap
+    pins: [GND, 12V]
+    pinlabels: [GND, 12V]
+  Power_Injection_3:
+    type: Power_Tap
+    pins: [GND, 12V]
+    pinlabels: [GND, 12V]
+  Power_Injection_4:
+    type: Power_Tap
+    pins: [GND, 12V]
+    pinlabels: [GND, 12V]
+  Rail_12V:
+    type: Power_Rail
+    pins: [GND, 12V]
+    pinlabels: [GND, 12V]
+
+cables:
+  LED_Segment_1:
+    wirecount: 3
+    gauge: 18 AWG
+    color_code: DIN
+    colors: [BK, RD, GN]
+    length: 5m
+  LED_Segment_2:
+    wirecount: 3
+    gauge: 18 AWG
+    color_code: DIN
+    colors: [BK, RD, GN]
+    length: 5m
+  Power_Tap_Wire:
+    wirecount: 2
+    gauge: 16 AWG
+    color_code: DIN
+    colors: [BK, RD]
+    length: 0.5m
+
+connections:
+  - # Strip 1: Start to Mid (5m)
+    - Strip_1_Start: [GND, 12V, DI]
+    - LED_Segment_1: [BK, RD, GN]
+    - Strip_1_Mid: [GND, 12V, DI]
+
+  - # Strip 1: Mid to End (5m)
+    - Strip_1_Mid: [GND, 12V, DI]
+    - LED_Segment_2: [BK, RD, GN]
+    - Strip_1_End: [GND, 12V, DI]
+
+  - # Power Injection at Midpoint Strip 1
+    - Rail_12V: [GND, 12V]
+    - Power_Tap_Wire: [BK, RD]
+    - Power_Injection_1: [GND, 12V]
+    # Connect Power_Injection_1 to Strip_1_Mid 12V/GND in physical build
+
+  - # Power Injection at Midpoint Strip 2
+    - Rail_12V: [GND, 12V]
+    - Power_Tap_Wire: [BK, RD]
+    - Power_Injection_2: [GND, 12V]
+
+  - # Power Injection at Midpoint Strip 3
+    - Rail_12V: [GND, 12V]
+    - Power_Tap_Wire: [BK, RD]
+    - Power_Injection_3: [GND, 12V]
+
+  - # Power Injection at Midpoint Strip 4
+    - Rail_12V: [GND, 12V]
+    - Power_Tap_Wire: [BK, RD]
+    - Power_Injection_4: [GND, 12V]
