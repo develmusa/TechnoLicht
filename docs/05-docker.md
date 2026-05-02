@@ -1,24 +1,12 @@
 # 05 — Docker Setup
 
-Goal: Install Docker CE and Docker Compose plugin.
+> **Already done by cloud-init.** Docker is installed, the `pi` user is in the `docker` group, and the LedFx image is pre-pulled.
 
-## Step 1: Install Docker
+Use this doc to verify.
 
-```bash
-curl -fsSL https://get.docker.com -o get-docker.sh
-sudo sh get-docker.sh
-rm get-docker.sh
-```
+---
 
-## Step 2: Add User to Docker Group
-
-```bash
-sudo usermod -aG docker pi
-```
-
-Log out and back in (or `newgrp docker`) for this to take effect.
-
-## Step 3: Verify
+## Step 1: Verify Docker
 
 ```bash
 docker --version
@@ -31,11 +19,31 @@ Docker version 24.x.x
 Docker Compose version v2.x.x
 ```
 
-## Step 4: Test
+## Step 2: Verify Docker Group
+
+```bash
+groups | grep docker
+```
+
+Expected: `docker` in the output.
+
+> If no `docker`, log out and back in (or `newgrp docker`).
+
+## Step 3: Verify LedFx Image
+
+```bash
+docker images | grep ledfx
+```
+
+Expected: `ledfx/ledfx` listed.
+
+## Step 4: Test Docker
 
 ```bash
 docker run hello-world
 ```
+
+---
 
 ## Done
 

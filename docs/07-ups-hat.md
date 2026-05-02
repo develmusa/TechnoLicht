@@ -2,6 +2,10 @@
 
 Goal: Monitor battery voltage, current, and percentage via I2C.
 
+> `ups-monitor.service` was already installed and enabled by cloud-init. This doc covers verification and battery reading.
+
+---
+
 ## Step 1: Verify I2C Detection
 
 ```bash
@@ -9,6 +13,10 @@ sudo i2cdetect -y 1
 ```
 
 You should see `42` in the output.
+
+If nothing appears:
+- Check the HAT is firmly seated on the GPIO header
+- Reboot: `sudo reboot`
 
 ## Step 2: Install Python Dependencies
 
@@ -33,22 +41,21 @@ Percentage: 87%
 
 Negative current = battery discharging (normal when not charging).
 
-## Step 4: Install Systemd Service
+## Step 4: Verify Systemd Service
 
-```bash
-sudo cp ~/TechnoLicht/config/ups-monitor.service /etc/systemd/system/
-sudo systemctl daemon-reload
-sudo systemctl enable ups-monitor.service
-sudo systemctl start ups-monitor.service
-```
-
-## Step 5: Verify Service
+Already enabled by cloud-init. Check status:
 
 ```bash
 sudo systemctl status ups-monitor
 ```
 
-## Step 6: View Logs
+If not running:
+
+```bash
+sudo systemctl start ups-monitor
+```
+
+## Step 5: View Logs
 
 ```bash
 sudo journalctl -u ups-monitor -f
@@ -65,6 +72,8 @@ When the main 14.4V battery is connected, the 5V rail is active, and the UPS HAT
 
 When main battery is disconnected (swap), the UPS HAT powers the RPi from its 18650 cells.
 
+---
+
 ## Done
 
-Proceed to `08-hotspot.md` (optional) or `09-verify.md`.
+Proceed to `08-hotspot.md` (verify) or `09-verify.md`.

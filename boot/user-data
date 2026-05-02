@@ -20,6 +20,8 @@
 # - Adds DNS aliases: ledfx.local, quinled.local
 # - Caps systemd journal size
 # - Enables zram swap
+# - Writes LedFx config, docker-compose, systemd services
+# - Enables LedFx + UPS monitor systemd services
 
 # ------------------------------------------------------------------
 # 1. HOSTNAME & FQDN
@@ -49,10 +51,6 @@ ssh_pwauth: true
 # ------------------------------------------------------------------
 # 3. APT — UPDATE, UPGRADE, INSTALL
 # ------------------------------------------------------------------
-runcmd:
-  # --- Package prep (allow unauthenticated repos during first boot)
-  - sed -i 's/^#\?allow_unauthenticated:.*/allow_unauthenticated: true/' /etc/cloud/cloud.cfg.d/90-dpkg.cfg || true
-
 package_update: true
 package_upgrade: true
 
@@ -63,11 +61,17 @@ packages:
   - zram-tools
   - iptables-persistent
   - netfilter-persistent
+  - git
+  - i2c-tools
+  - python3-pip
+  - alsa-utils
+  - vim
+  - htop
 
 # ------------------------------------------------------------------
-# 4. NETWORK (Netplan / dhcpcd hybrid)
-#    RPi OS Trixie defaults to NetworkManager, but we write dhcpcd
-#    config AND enable dhcpcd service for predictable static IPs.
+# 4. WRITE FILES — Configs baked in at first boot
+#    All files written as root (user 'pi' does not exist yet here).
+#    Ownership is fixed in runcmd (section 6).
 # ------------------------------------------------------------------
 write_files:
 
@@ -229,7 +233,7 @@ write_files:
       RuntimeWatchdogSec=30
       ShutdownWatchdogSec=2min
 
-  # --- cloud.cfg: set NetworkManager to not touch wlan0 (AP mode) ---
+  # --- NetworkManager: don't manage wlan0 (AP mode) ---
   - path: /etc/NetworkManager/NetworkManager.conf
     permissions: '0644'
     content: |
@@ -269,6 +273,103 @@ write_files:
       PRIORITY=100
       NR_CPUS=0
 
+  # --- LedFx initial config (40m WS2815, 1333 px, 4 outputs) ---
+  - path: /home/pi/ledfx-config/config.yaml
+    permissions: '0644'
+    content: |
+      ledfx:
+        audio:
+          source: "default"
+          sample_rate: 48000
+          buffer_size: 1024
+          device_index: 0
+        host: "0.0.0.0"
+        port: 8888
+        devices:
+          - name: "QuinLED"
+            type: "wled"
+            config:
+              ip_address: "192.168.100.100"
+              port: 21324
+              pixel_count: 1333
+              segments:
+                - name: "Strip-1"
+                  start: 0
+                  end: 333
+                  output: 0
+                - name: "Strip-2"
+                  start: 334
+                  end: 666
+                  output: 1
+                - name: "Strip-3"
+                  start: 667
+                  end: 999
+                  output: 2
+                - name: "Strip-4"
+                  start: 1000
+                  end: 1332
+                  output: 3
+        effects: {}
+        scenes: {}
+
+  # --- Docker Compose for LedFx ---
+  - path: /home/pi/TechnoLicht/docker/docker-compose.yml
+    permissions: '0644'
+    content: |
+      services:
+        ledfx:
+          image: ledfx/ledfx:latest
+          container_name: ledfx
+          restart: unless-stopped
+          network_mode: host
+          privileged: true
+          environment:
+            - PUID=1000
+            - PGID=1000
+          volumes:
+            - /home/pi/ledfx-config:/config
+            - /dev/snd:/dev/snd
+          devices:
+            - /dev/snd:/dev/snd
+
+  # --- Systemd service: LedFx Docker container ---
+  - path: /etc/systemd/system/ledfx.service
+    permissions: '0644'
+    content: |
+      [Unit]
+      Description=LedFx Docker Container
+      After=docker.service
+      Requires=docker.service
+
+      [Service]
+      Type=oneshot
+      RemainAfterExit=yes
+      WorkingDirectory=/home/pi/TechnoLicht/docker
+      ExecStart=/usr/bin/docker compose up -d
+      ExecStop=/usr/bin/docker compose down
+      User=pi
+
+      [Install]
+      WantedBy=multi-user.target
+
+  # --- Systemd service: UPS HAT battery monitor ---
+  - path: /etc/systemd/system/ups-monitor.service
+    permissions: '0644'
+    content: |
+      [Unit]
+      Description=UPS HAT Battery Monitor
+      After=multi-user.target
+
+      [Service]
+      Type=simple
+      ExecStart=/usr/bin/python3 /home/pi/TechnoLicht/scripts/power-monitor.py
+      Restart=always
+      RestartSec=30
+      User=pi
+
+      [Install]
+      WantedBy=multi-user.target
+
 # ------------------------------------------------------------------
 # 5. BOOTCMD: config.txt CMDLINE tweaks BEFORE network modules load
 # ------------------------------------------------------------------
@@ -284,52 +385,53 @@ bootcmd:
   - echo "systemd-networkd-wait-online.service" >> /etc/systemd/system/network-online.target.wants/network-online.target
 
 # ------------------------------------------------------------------
-# 6. FINALISATION COMMANDS (once after all packages installed)
+# 6. FINALISATION COMMANDS (once after all modules complete)
 # ------------------------------------------------------------------
 runcmd:
-  # Fix perms
+  # --- Fix ownership (user 'pi' now exists) ---
+  - mkdir -p /home/pi/TechnoLicht/docker /home/pi/ledfx-config
+  - chown -R pi:pi /home/pi/TechnoLicht /home/pi/ledfx-config
+
+  # --- WiFi dispatcher perms ---
   - chmod +x /etc/NetworkManager/dispatcher.d/10-disable-wifi-powersave
 
-  # Hostapd
+  # --- Enable services ---
   - systemctl unmask hostapd
   - systemctl enable hostapd
-  - systemctl stop hostapd
-
-  # Dnsmasq
   - systemctl enable dnsmasq
-  - systemctl stop dnsmasq
-
-  # dhcpcd
   - systemctl enable dhcpcd
-  - systemctl stop dhcpcd
+  - systemctl enable ledfx
+  - systemctl enable ups-monitor
 
-  # iptables persistent rules
+  # --- Save iptables rules ---
   - netfilter-persistent save
 
-  # Enable IP forwarding
+  # --- Apply sysctl ---
   - sysctl --system
 
-  # Docker: add pi user to docker group
+  # --- Docker: add pi to group and pull image ---
   - usermod -aG docker pi
-
-  # Docker: pull LedFx image so it's ready on first login
   - systemctl start docker
   - docker pull ledfx/ledfx:latest
 
-  # Enable zramswap
+  # --- Enable zramswap ---
   - systemctl enable zramswap
-  - systemctl start zramswap
 
-  # Start networking stack in correct order
+  # --- I2C for UPS HAT ---
+  - raspi-config nonint do_i2c 0
+
+  # --- Start everything ---
   - systemctl start dhcpcd
   - systemctl start hostapd
   - systemctl start dnsmasq
+  - systemctl start zramswap
 
-  # Apply sysctl (IP forwarding)
+  # --- Re-apply sysctl (IP forwarding) ---
   - sysctl -p /etc/sysctl.d/99-ip-forward.conf
 
-  # Reload systemd to pick up watchdog config
+  # --- Reload systemd (watchdog, new units) ---
   - systemctl daemon-reexec
+  - systemctl daemon-reload
 
-  # Reboot after first-boot configuration is complete (optional — safer to let user decide)
+  # (Optional reboot after first-boot is complete)
   # - reboot

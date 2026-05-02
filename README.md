@@ -11,20 +11,12 @@ Sound-reactive LED light system for a three-wheel bicycle.
 
 ## Quickstart
 
-### Recommended: Cloud-init (Zero Manual Steps)
-
 1. Flash Raspberry Pi OS Lite (64-bit) to SD card: `xzcat ... | sudo dd of=/dev/sdX`
 2. Copy `boot/user-data` and `boot/meta-data` to the boot partition
-3. Boot the Pi — everything (network, Docker, hotspot, audio) configures automatically
+3. Boot the Pi — everything (network, Docker, hotspot, audio, LedFx, UPS monitor) configures automatically
 4. Join WiFi `TechnoLicht` / `technolight123` and open [http://ledfx.local](http://ledfx.local)
 
 Full steps: `docs/01-flash-os.md`
-
-### Fallback: Manual Setup
-
-1. Flash Raspberry Pi OS Lite (64-bit) using Raspberry Pi Imager
-2. Copy `config/` to `/home/pi/TechnoLicht/` on the Pi
-3. Follow `docs/01-flash-os.md` through `docs/09-verify.md`
 
 ## Network
 
@@ -77,9 +69,33 @@ Outputs SVGs to `wireviz/output/`.
 TechnoLicht/
 ├── README.md
 ├── audio-system-diagram.html
-├── docs/           # Setup instructions (markdown + commands)
-├── config/         # Ready-to-use config files
-├── wireviz/        # Wiring diagrams as code
-├── docker/         # Docker Compose for LedFx
-└── scripts/        # Python helpers
+├── boot/             # Cloud-init NoCloud files (user-data + meta-data)
+├── docs/             # Setup instructions (markdown + commands)
+│   └── hardware/     # Wiring, power, LED strip reference
+├── scripts/          # Python helpers (UPS monitor, strobe trigger)
+└── wireviz/          # Wiring diagrams as code
+```
+
+*Note: All config files previously in `config/` and `docker/` are now baked into `boot/user-data` and written to the Pi on first boot.*
+TechnoLicht/
+├── README.md
+├── audio-system-diagram.html
+├── boot/             # Cloud-init NoCloud files (user-data + meta-data)
+├── docs/             # Setup instructions (markdown + commands)
+│   └── hardware/     # Wiring, power, LED strip reference
+├── scripts/          # Python helpers (UPS monitor, strobe trigger)
+└── wireviz/          # Wiring diagrams as code
+```
+
+*Note: All config files previously in `config/` and `docker/` are now baked into `boot/user-data` and written to the Pi on first boot.*
+TechnoLicht/
+├── README.md
+├── audio-system-diagram.html
+├── boot/             # Cloud-init NoCloud files (user-data + meta-data)
+├── config/           # Runtime config files copied to the Pi after boot
+├── docker/           # Docker Compose for LedFx
+├── docs/             # Setup instructions (markdown + commands)
+│   └── hardware/     # Wiring, power, LED strip reference
+├── scripts/          # Python helpers (UPS monitor, strobe trigger)
+└── wireviz/          # Wiring diagrams as code
 ```

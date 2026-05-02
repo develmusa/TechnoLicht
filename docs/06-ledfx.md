@@ -2,21 +2,24 @@
 
 Goal: Deploy LedFx in Docker, connected to QuinLED via Ethernet.
 
-## Step 1: Copy Config
+> `ledfx-config.yaml`, `docker-compose.yml`, and the systemd service were all written by cloud-init. This doc covers starting the container and configuring WLED in the web UI.
+
+---
+
+## Step 1: Start Container
 
 ```bash
-mkdir -p ~/ledfx-config
-cp ~/TechnoLicht/config/ledfx-config.yaml ~/ledfx-config/config.yaml
+sudo systemctl start ledfx
 ```
 
-## Step 2: Start Container
+Or manually:
 
 ```bash
 cd ~/TechnoLicht/docker
 docker compose up -d
 ```
 
-## Step 3: Verify Running
+## Step 2: Verify Running
 
 ```bash
 docker ps
@@ -24,19 +27,27 @@ docker ps
 
 Expected: `ledfx` container running.
 
-## Step 4: Access Web UI
+Or via systemd:
 
-From a device on the same network:
+```bash
+sudo systemctl status ledfx
 ```
-http://192.168.100.10:8888
+
+## Step 3: Access Web UI
+
+From the DJ laptop connected to `TechnoLicht` WiFi:
+
+```
+http://ledfx.local
 ```
 
 Or from the RPi itself:
+
 ```
 http://localhost:8888
 ```
 
-## Step 5: Initial Config (Web UI)
+## Step 4: Initial Config (Web UI)
 
 1. **Audio**: Settings → Audio → Select your USB sound card
 2. **Device**: Settings → Devices → Add WLED Device
@@ -46,21 +57,35 @@ http://localhost:8888
 3. **Segments**: Define your 4 LED segments (10m each on outputs 0-3)
 4. **Effects**: Choose and tune audio-reactive effects
 
-Save configuration in the UI. It persists in the Docker volume.
+Save configuration in the UI. It persists in `/home/pi/ledfx-config/` via Docker volume.
 
-## Step 6: Auto-Start on Boot
+## Step 5: Auto-Start on Boot
+
+Already enabled by cloud-init. Verify:
 
 ```bash
-sudo cp ~/TechnoLicht/config/ledfx.service /etc/systemd/system/
-sudo systemctl daemon-reload
-sudo systemctl enable ledfx.service
-sudo systemctl start ledfx.service
+sudo systemctl is-enabled ledfx
 ```
 
-Verify:
-```bash
-sudo systemctl status ledfx
-```
+Expected: `enabled`
+
+---
+
+## Where Are the Config Files?
+
+Since everything was baked into `user-data`, these were written automatically:
+
+| File | Location | What It Does |
+|------|----------|--------------|
+| LedFx config | `/home/pi/ledfx-config/config.yaml` | Pixel mapping, segments, WLED IP |
+| Docker Compose | `/home/pi/TechnoLicht/docker/docker-compose.yml` | Container definition |
+| Systemd service | `/etc/systemd/system/ledfx.service` | Auto-start on boot |
+
+**To edit pixel counts or LED layout later:**
+1. Edit `/home/pi/ledfx-config/config.yaml`
+2. Restart: `sudo systemctl restart ledfx`
+
+---
 
 ## Done
 

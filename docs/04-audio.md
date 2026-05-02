@@ -1,6 +1,10 @@
 # 04 — Audio Setup
 
-Goal: USB 6-in-1 sound card as default ALSA capture device.
+Goal: USB 6-in-1 sound card as default ALSA capture device, tuned for the amp line-in.
+
+> `asound.conf` was already written by cloud-init. This doc covers detection, volume tuning, and verification.
+
+---
 
 ## Step 1: Plug In Sound Card
 
@@ -23,15 +27,9 @@ card 1: Device [USB Audio Device], device 0: USB Audio [USB Audio]
 
 Note your card number (e.g., `card 1`).
 
-## Step 3: Apply ALSA Config
+> `asound.conf` already sets `card 1` as default. If your card number differs, skip to **Troubleshooting**.
 
-```bash
-sudo cp ~/TechnoLicht/config/asound.conf /etc/asound.conf
-```
-
-This sets the USB sound card as default capture.
-
-## Step 4: Set Capture Volume
+## Step 3: Set Capture Volume
 
 ```bash
 alsamixer
@@ -46,7 +44,7 @@ Save levels:
 sudo alsactl store
 ```
 
-## Step 5: Test Capture
+## Step 4: Test Capture
 
 ```bash
 arecord -d 5 -f cd test.wav
@@ -55,20 +53,23 @@ aplay test.wav
 
 You should hear audio from your amp. If not, check connections and volume.
 
-## Step 6: Clean Up
+## Step 5: Clean Up
 
 ```bash
 rm test.wav
 ```
+
+---
 
 ## Troubleshooting
 
 | Symptom | Fix |
 |---------|-----|
 | No sound card in `arecord -l` | Re-plug USB, try different port |
+| Card number is not `1` | Edit `/etc/asound.conf` to match your card number, then `sudo alsactl store` |
 | Static/noise | Check ground loop; try different USB port |
 | Clipping/distortion | Lower capture volume in `alsamixer` |
 
 ## Done
 
-Proceed to `05-docker.md`.
+Proceed to `06-ledfx.md`.

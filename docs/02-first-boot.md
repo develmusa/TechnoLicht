@@ -1,56 +1,84 @@
 # 02 — First Boot Setup
 
-Run all commands as `pi` user (or prefix with `sudo`).
+> **Already done by cloud-init.** If you used the primary flashing method in `01-flash-os.md`, first boot happened automatically. Use this doc to verify the initial state.
 
-## Step 1: Update System
+---
+
+## What Was Configured Automatically
+
+- [x] System updated (`apt update && apt full-upgrade`)
+- [x] Essentials installed: `git`, `i2c-tools`, `python3-pip`, `alsa-utils`, `vim`, `htop`
+- [x] I2C enabled for UPS HAT
+- [x] Hostname set to `technolight-pi`
+- [x] User `pi` created with password `technolight123`
+- [x] SSH enabled with password authentication
+- [x] Docker installed and `pi` added to `docker` group
+- [x] LedFx Docker image pre-pulled
+
+---
+
+## Verification Steps
+
+### 1. SSH In
+
+Join WiFi `TechnoLicht` / `technolight123` on your laptop, then:
 
 ```bash
-sudo apt update
-sudo apt full-upgrade -y
+ssh pi@192.168.50.1
+# or
+ssh pi@ledfx.local
+# Password: technolight123
 ```
 
-## Step 2: Install Essentials
+### 2. Check I2C (UPS HAT)
 
-```bash
-sudo apt install -y \
-  git \
-  i2c-tools \
-  python3-pip \
-  alsa-utils \
-  vim \
-  htop
-```
-
-## Step 3: Enable I2C (for UPS HAT)
-
-```bash
-sudo raspi-config nonint do_i2c 0
-```
-
-Verify after reboot:
 ```bash
 sudo i2cdetect -y 1
 ```
-You should see `42` in the grid (UPS HAT address).
 
-## Step 4: Copy Repo to Pi
+Expected: `42` in the output grid (UPS HAT address).
 
-From your computer:
+### 3. Check Docker
+
 ```bash
-scp -r /path/to/TechnoLicht pi@technolight-pi.local:/home/pi/
+docker --version
+docker compose version
+docker images | grep ledfx
 ```
 
-Or clone from git if you pushed:
+Expected: Docker installed, LedFx image present.
+
+### 4. Check Audio Device
+
 ```bash
-git clone <your-repo-url> ~/TechnoLicht
+arecord -l
 ```
 
-## Step 5: Reboot
+Expected: USB sound card listed (e.g., `card 1: Device [USB Audio Device]`).
+
+> **Note:** `asound.conf` is already written, but ALSA capture volume is not set. You must run `alsamixer` (step 4 in `04-audio.md`) to set the capture volume to ~70–80%.
+
+### 5. Reboot (Recommended)
 
 ```bash
 sudo reboot
 ```
 
+This ensures all first-boot services start cleanly on a subsequent boot.
+
+---
+
+## Troubleshooting
+
+| Symptom | Fix |
+|---------|-----|
+| Can't SSH | Wait longer — first boot can take 5 min. If still nothing, check serial console or re-flash. |
+| `i2cdetect` not found | `sudo apt install i2c-tools` (should already be installed by cloud-init) |
+| Docker not found | Cloud-init may not have finished. Check `sudo systemctl status cloud-init` |
+| No USB sound card | Plug it in and re-run `arecord -l`. Try a different USB port. |
+
+---
+
 ## Done
 
-Proceed to `03-network.md`.
+Proceed to `03-network.md` (verify), `04-audio.md` (set volume), or `06-ledfx.md` (start container).
