@@ -141,7 +141,7 @@ ssh pi@192.168.50.1
 |---------|-----|
 | Can't see `TechnoLicht` WiFi | Wait longer (up to 5 min). Check `hostapd` status via serial console or re-flash. |
 | `ledfx.local` doesn't resolve | Use IP `192.168.50.1`. Ensure your laptop accepted DHCP DNS server. |
-| LedFx not running yet | Cloud-init pulled the image but did not start the container. See `05-docker.md` to compose up. |
+| LedFx not running yet | Cloud-init pulled the image but may not have started the container. Run `sudo systemctl start ledfx` or see `06-ledfx.md`. |
 | No internet on laptop via AP | **Expected** — this is an isolated network for show control, not a router to the internet. |
 
 ---
@@ -151,7 +151,9 @@ ssh pi@192.168.50.1
 If you prefer not to use cloud-init, see the archived methods below. They require manual post-boot configuration.
 
 <details>
-<summary><b>Method A: Raspberry Pi Imager (GUI)</b></summary>
+<summary><b>Method A: Raspberry Pi Imager (GUI) — Deprecated</b></summary>
+
+> This method requires manual post-boot setup because the `config/` directory no longer exists in the repo. Use only if you cannot use cloud-init.
 
 1. Download Raspberry Pi Imager: https://www.raspberrypi.com/software/
 2. Choose **Raspberry Pi OS Lite (64-bit)**

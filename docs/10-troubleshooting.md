@@ -73,6 +73,9 @@ If no response:
 docker logs ledfx
 
 # Restart
+sudo systemctl restart ledfx
+
+# Or manually via docker compose (path exists on the Pi, written by cloud-init)
 cd ~/TechnoLicht/docker && docker compose restart
 
 # Rebuild

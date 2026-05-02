@@ -26,11 +26,13 @@
 
 ## Tools
 
-- Computer with Raspberry Pi Imager
+- Linux PC with `dd`, `wget`, `xzcat`, `mount` (for cloud-init method)
 - MicroSD card reader
 - SSH client (Linux/Mac terminal, PuTTY, or Windows Terminal)
 - Small Phillips screwdriver
 - Wire strippers + crimper
+
+> **Fallback only:** Raspberry Pi Imager if you cannot use the cloud-init method.
 
 ## Before You Start
 

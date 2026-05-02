@@ -41,7 +41,7 @@ curl -s http://localhost:8888 | head
 
 Should return HTML.
 
-Open in browser: `http://192.168.100.10:8888`
+Open in browser: `http://ledfx.local:8888`
 
 ## LEDs
 
