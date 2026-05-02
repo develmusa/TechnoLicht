@@ -15,20 +15,21 @@ TechnoLicht is a light control system for a three-wheel bicycle with a sound sys
 - Power injection: 12V/GND every 5m on 10m strips
 
 ### Software / IaC
-- Ansible on Raspberry Pi OS Lite 64-bit
+- Cloud-init NoCloud on Raspberry Pi OS Lite 64-bit
 - WireViz (YAML-defined) for wiring diagrams
 - Docker Compose for LedFx deployment
 
 ### Key Design Decisions
-- Ansible for IaC (rejected NixOS and Pulumi after analysis)
+- Cloud-init for IaC (rejected Ansible, NixOS and Pulumi after analysis)
 - Docker Compose for LedFx deployment
 - USB sound card as default audio input, Rekordbox over WiFi as optional
 - Static Ethernet IPs: RPi 192.168.100.10, QuinLED 192.168.100.100
-- WiFi hotspot SSID "TechnoLicht-DJ" / password "changeme123" (disabled by default)
+- WiFi hotspot SSID "TechnoLicht" / password "technolight123"
 - 4x10m LED strips on QuinLED outputs 0-3, output 7 for SSR strobe
 - Power injection every 5m
 - Waveshare UPS HAT charged via USB 5V->8.4V converter from 5V rail
 - UPS HAT: telemetry only, NO auto-shutdown (battery bridges main battery swaps)
+- WLED and LedFx LED configuration done manually via web UI for simplicity
 
 ## Proposed Repository Structure
 

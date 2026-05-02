@@ -68,12 +68,14 @@ Outputs SVGs to `wireviz/output/`.
 ```
 TechnoLicht/
 ├── README.md
+├── TODO.md             # Pending tasks (audio device, WLED config)
 ├── audio-system-diagram.html
-├── boot/             # Cloud-init NoCloud files (user-data + meta-data)
-├── docs/             # Setup instructions (markdown + commands)
-│   └── hardware/     # Wiring, power, LED strip reference
-├── scripts/          # Python helpers (UPS monitor, strobe trigger)
-└── wireviz/          # Wiring diagrams as code
+├── boot/               # Cloud-init NoCloud files (user-data + meta-data)
+├── docker/             # Docker Compose for LedFx (reference copy)
+├── docs/               # Setup instructions (markdown + commands)
+│   └── hardware/       # Wiring, power, LED strip reference
+├── scripts/            # Python helpers (UPS monitor, strobe trigger)
+└── wireviz/            # Wiring diagrams as code
 ```
 
-*Note: All config files previously in `config/` and `docker/` are now baked into `boot/user-data` and written to the Pi on first boot.*
+*Note: The canonical Docker Compose and LedFx config are baked into `boot/user-data` and written to the Pi on first boot. The `docker/` directory contains a reference copy for convenience.*

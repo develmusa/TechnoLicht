@@ -273,7 +273,10 @@ write_files:
       PRIORITY=100
       NR_CPUS=0
 
-  # --- LedFx initial config (40m WS2815, 1333 px, 4 outputs) ---
+  # --- LedFx initial config (minimal — WLED device pre-added, segments/effects configured manually via UI)
+  # TODO: Audio device index must be set once USB sound card is available.
+  #       Run `arecord -l` on the Pi to find the card number, then update
+  #       `audio.device_index` below and re-flash or edit /home/pi/ledfx-config/config.yaml.
   - path: /home/pi/ledfx-config/config.yaml
     permissions: '0644'
     content: |
@@ -282,6 +285,8 @@ write_files:
           source: "default"
           sample_rate: 48000
           buffer_size: 1024
+          # TODO: Update device_index after plugging in the USB sound card.
+          # Run: arecord -l  (look for card number, e.g. card 1)
           device_index: 0
         host: "0.0.0.0"
         port: 8888
@@ -291,24 +296,7 @@ write_files:
             config:
               ip_address: "192.168.100.100"
               port: 21324
-              pixel_count: 1333
-              segments:
-                - name: "Strip-1"
-                  start: 0
-                  end: 333
-                  output: 0
-                - name: "Strip-2"
-                  start: 334
-                  end: 666
-                  output: 1
-                - name: "Strip-3"
-                  start: 667
-                  end: 999
-                  output: 2
-                - name: "Strip-4"
-                  start: 1000
-                  end: 1332
-                  output: 3
+              # pixel_count and segments are configured manually via the LedFx web UI
         effects: {}
         scenes: {}
 

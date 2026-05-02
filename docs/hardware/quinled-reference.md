@@ -39,7 +39,7 @@ Switch is accessible on the board. No need to remove ESP32.
 |-----------|-------|
 | IP Address | 192.168.100.100 |
 | Subnet Mask | 255.255.255.0 |
-| Gateway | 192.168.100.1 |
+| Gateway | 192.168.100.10 |
 | Type | QuinLED-Dig-Octa |
 
 Set in WLED: Settings → WiFi Setup → Ethernet Type
