@@ -50,7 +50,7 @@ Full steps: `docs/01-flash-os.md`
 | 05 | Docker |
 | 06 | LedFx |
 | 07 | UPS HAT |
-| 08 | Hotspot (optional) |
+| 08 | Hotspot (verify) |
 | 09 | Verify |
 | 10 | Troubleshooting |
 
@@ -77,25 +77,3 @@ TechnoLicht/
 ```
 
 *Note: All config files previously in `config/` and `docker/` are now baked into `boot/user-data` and written to the Pi on first boot.*
-TechnoLicht/
-├── README.md
-├── audio-system-diagram.html
-├── boot/             # Cloud-init NoCloud files (user-data + meta-data)
-├── docs/             # Setup instructions (markdown + commands)
-│   └── hardware/     # Wiring, power, LED strip reference
-├── scripts/          # Python helpers (UPS monitor, strobe trigger)
-└── wireviz/          # Wiring diagrams as code
-```
-
-*Note: All config files previously in `config/` and `docker/` are now baked into `boot/user-data` and written to the Pi on first boot.*
-TechnoLicht/
-├── README.md
-├── audio-system-diagram.html
-├── boot/             # Cloud-init NoCloud files (user-data + meta-data)
-├── config/           # Runtime config files copied to the Pi after boot
-├── docker/           # Docker Compose for LedFx
-├── docs/             # Setup instructions (markdown + commands)
-│   └── hardware/     # Wiring, power, LED strip reference
-├── scripts/          # Python helpers (UPS monitor, strobe trigger)
-└── wireviz/          # Wiring diagrams as code
-```
