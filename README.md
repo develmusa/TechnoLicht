@@ -13,10 +13,22 @@ Sound-reactive LED light system for a three-wheel bicycle.
 
 1. Flash Raspberry Pi OS Lite (64-bit) to SD card: `xzcat ... | sudo dd of=/dev/sdX`
 2. Copy `boot/user-data` and `boot/meta-data` to the boot partition
-3. Boot the Pi — everything (network, Docker, hotspot, audio, LedFx, UPS monitor) configures automatically
+3. Boot the Pi — cloud-init configures the system (first boot 3–6 min, then auto-reboots)
 4. Join WiFi `TechnoLicht` / `technolight123` and open [http://ledfx.local](http://ledfx.local)
+5. Manually configure WLED and LedFx — see **Post-Boot Setup** below
 
-Full steps: `docs/01-flash-os.md`
+Full setup steps: `docs/01-flash-os.md`
+
+## Post-Boot Setup (Manual)
+
+Cloud-init brings up a working system. LED and audio configuration are done manually by design:
+
+1. **LedFx** (http://ledfx.local): add WLED device, define segments, choose effects
+2. **Audio**: select USB sound card in LedFx settings, run `alsamixer` for capture volume
+3. **WLED** (http://quinled.local): configure outputs 0–3, set brightness limit ~70%
+4. **Strobe**: set output 7 to relay mode in WLED
+
+Full checklist: [TODO.md](TODO.md)
 
 ## Network
 
@@ -68,6 +80,7 @@ Outputs SVGs to `wireviz/output/`.
 ```
 TechnoLicht/
 ├── README.md
+├── plan.md
 ├── TODO.md             # Pending tasks (audio device, WLED config)
 ├── audio-system-diagram.html
 ├── boot/               # Cloud-init NoCloud files (user-data + meta-data)

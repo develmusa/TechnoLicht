@@ -128,20 +128,30 @@ write_files:
     content: |
       interface=wlan0
       driver=nl80211
+      ctrl_interface=/var/run/hostapd
+      ctrl_interface_group=0
       ssid=TechnoLicht
       hw_mode=g
+      ieee80211n=1
+      ht_capab=[SHORT-GI-20][DSSS_CCK-40]
       channel=7
-      wmm_enabled=0
+      wmm_enabled=1
       macaddr_acl=0
       auth_algs=1
       ignore_broadcast_ssid=0
       wpa=2
       wpa_passphrase=technolight123
       wpa_key_mgmt=WPA-PSK
-      wpa_pairwise=TKIP
+      wpa_pairwise=CCMP
       rsn_pairwise=CCMP
       country_code=DE
       ieee80211d=1
+
+  # --- hostapd: tell Debian where the config is ---
+  - path: /etc/default/hostapd
+    permissions: '0644'
+    content: |
+      DAEMON_CONF="/etc/hostapd/hostapd.conf"
 
   # --- dnsmasq: DHCP + DNS for AP clients ---
   - path: /etc/dnsmasq.conf
@@ -362,6 +372,8 @@ write_files:
 # 5. BOOTCMD: config.txt CMDLINE tweaks BEFORE network modules load
 # ------------------------------------------------------------------
 bootcmd:
+  # Force old-style interface names (eth0, wlan0) for portable AP config
+  - echo ' net.ifnames=0 biosdevname=0' >> /boot/firmware/cmdline.txt
   # gpu_mem: free up video RAM for audio processing
   - echo "dtoverlay=gpu_mem=16" >> /boot/firmware/config.txt
   # Disable HDMI output (save power, prevent ALSA conflict)
@@ -408,9 +420,10 @@ runcmd:
   # --- I2C for UPS HAT ---
   - raspi-config nonint do_i2c 0
 
-  # --- Start everything ---
-  - systemctl start dhcpcd
+  # --- Start hostapd first (must claim wlan0 before dhcpcd) ---
   - systemctl start hostapd
+  - sleep 2
+  - systemctl start dhcpcd
   - systemctl start dnsmasq
   - systemctl start zramswap
 
@@ -421,5 +434,5 @@ runcmd:
   - systemctl daemon-reexec
   - systemctl daemon-reload
 
-  # (Optional reboot after first-boot is complete)
-  # - reboot
+  # --- Reboot to apply net.ifnames=0 (kernel cmdline needs fresh boot) ---
+  - reboot
