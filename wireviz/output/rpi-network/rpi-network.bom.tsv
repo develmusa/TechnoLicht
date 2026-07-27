@@ -1,0 +1,10 @@
+Id	Description	Qty	Unit	Designators
+1	Cable, 3 x 22 AWG	0	m	Audio_Line
+2	Cable, 4 x 24 AWG	0	m	Ethernet_Cable, USB_Audio_Cable
+3	Cable, 5 x 26 AWG	0	m	I2C_Ribbon
+4	Connector, 3.5mm_TRS, 3 pins	2		Amp_LineOut, Sound_Card_LineIn
+5	Connector, HAT_40Pin, 5 pins	1		UPS_HAT_GPIO
+6	Connector, RJ45, 4 pins	2		QuinLED_Eth, RPi_Eth
+7	Connector, RPi_40Pin, 5 pins	1		RPi_GPIO
+8	Connector, USB_A, 4 pins	1		RPi_USB_Audio
+9	Connector, USB_Mini, 4 pins	1		Sound_Card

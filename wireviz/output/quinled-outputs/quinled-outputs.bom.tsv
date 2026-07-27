@@ -1,0 +1,5 @@
+Id	Description	Qty	Unit	Designators
+1	Cable, 1 x 26 AWG	0	m	BI_Jumper
+2	Cable, 3 x 18 AWG	0	m	LED_Data_0, LED_Data_1, LED_Data_2, LED_Data_3
+3	Connector, Dig_Octa_Output, 3 pins	4		QuinLED_Out0, QuinLED_Out1, QuinLED_Out2, QuinLED_Out3
+4	Connector, WS2815_4Pin, 4 pins	4		Strip_1_Start, Strip_2_Start, Strip_3_Start, Strip_4_Start

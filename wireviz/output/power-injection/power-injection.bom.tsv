@@ -1,0 +1,6 @@
+Id	Description	Qty	Unit	Designators
+1	Cable, 2 x 16 AWG	0.5	m	Power_Tap_Wire
+2	Cable, 3 x 18 AWG	10	m	LED_Segment_1, LED_Segment_2
+3	Connector, Power_Rail, 2 pins	1		Rail_12V
+4	Connector, Power_Tap, 2 pins	4		Power_Injection_1, Power_Injection_2, Power_Injection_3, Power_Injection_4
+5	Connector, WS2815_3Pin, 3 pins	3		Strip_1_End, Strip_1_Mid, Strip_1_Start

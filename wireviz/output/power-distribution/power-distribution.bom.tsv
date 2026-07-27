@@ -1,0 +1,13 @@
+Id	Description	Qty	Unit	Designators
+1	Cable, 2 x 10 AWG	0	m	Battery_Main
+2	Cable, 2 x 12 AWG	0	m	Rail_12V
+3	Cable, 2 x 16 AWG	0	m	Rail_5V
+4	Cable, 2 x 22 AWG	0	m	Charger_Cable
+5	Connector, DC-DC_50W, 4 pins	1		Buck_5V
+6	Connector, Power_7HC, 2 pins	1		QuinLED_Power
+7	Connector, RPi4B_GPIO, 2 pins	1		RPi
+8	Connector, USB_5V_to_8.4V, 4 pins	1		USB_Charger
+9	Connector, USB_C, 2 pins	1		RPi_USB_C
+10	Connector, WG8-36s1225, 4 pins	1		Buck_12V
+11	Connector, Waveshare_UPS, 4 pins	1		UPS_HAT
+12	Connector, XT60, 2 pins	1		Battery
