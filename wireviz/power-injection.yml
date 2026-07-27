@@ -50,19 +50,19 @@ cables:
     gauge: 18 AWG
     color_code: DIN
     colors: [BK, RD, GN]
-    length: 5m
+    length: 5 m
   LED_Segment_2:
     wirecount: 3
     gauge: 18 AWG
     color_code: DIN
     colors: [BK, RD, GN]
-    length: 5m
+    length: 5 m
   Power_Tap_Wire:
     wirecount: 2
     gauge: 16 AWG
     color_code: DIN
     colors: [BK, RD]
-    length: 0.5m
+    length: 0.5 m
 
 connections:
   - # Strip 1: Start to Mid (5m)
