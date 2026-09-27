@@ -18,7 +18,8 @@ OS: Raspberry Pi OS Lite (arm64, Trixie, 2026-04-21).
 | Hotspot subnet (Pi) | `192.168.50.1/24` |
 | Eth P2P subnet (Pi) | `192.168.100.1/24` |
 | QuinLED IP | `192.168.100.10` |
-| LedFx web UI | `http://TechnoLichtPi.local:8888` |
+| LedFx web UI | `http://ledfx.lan` (on hotspot, see §11) · `http://192.168.50.1:8888` |
+| WLED web UI | `http://wled.lan` (on hotspot, see §11) · `http://192.168.100.10` |
 
 ---
 
@@ -431,3 +432,84 @@ TERM=xterm alsamixer -c 1     # workaround
 ```
 
 Or use `amixer` non-interactively (commands above).
+
+## 11. Friendly names — `ledfx.lan` / `wled.lan`
+
+Hotspot clients (phone, laptop) open the UIs by name, without IPs or ports:
+
+| URL | Goes to |
+|---|---|
+| `http://ledfx.lan` | LedFx (`127.0.0.1:8888` on the Pi) |
+| `http://wled.lan` | WLED on the QuinLED (`192.168.100.10`) |
+
+How it works: the hotspot's dnsmasq resolves both names to the Pi (`192.168.50.1`); nginx on port 80 proxies by hostname. The phone only ever talks to the Pi, so WLED works even without the step 7 routing.
+
+`.lan` rather than `.local`: `.local` is mDNS, which many Android phones don't resolve. Bare names (`http://ledfx`) get treated as searches by browsers.
+
+### 11a. DNS names on the hotspot
+
+```bash
+sudo tee /etc/NetworkManager/dnsmasq-shared.d/names.conf <<'EOF'
+address=/ledfx.lan/192.168.50.1
+address=/wled.lan/192.168.50.1
+EOF
+sudo nmcli connection up Hotspot     # re-activates the hotspot; clients drop for a few seconds
+```
+
+Verify from the phone: `http://ledfx.lan:8888` opens LedFx.
+
+### 11b. nginx reverse proxy
+
+Needs internet (home mode, §8). IPv6 on the home LAN may not route — force IPv4:
+
+```bash
+sudo apt -o Acquire::ForceIPv4=true update
+sudo apt -o Acquire::ForceIPv4=true install -y nginx
+```
+
+```bash
+sudo tee /etc/nginx/sites-available/technolicht <<'EOF'
+map $http_upgrade $connection_upgrade { default upgrade; '' close; }
+
+# LedFx: http://ledfx.lan (also the default for http://192.168.50.1)
+server {
+    listen 80 default_server;
+    server_name ledfx.lan;
+    location / {
+        proxy_pass http://127.0.0.1:8888;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection $connection_upgrade;
+        proxy_set_header Host $host;
+        proxy_read_timeout 1d;
+    }
+}
+
+# WLED on the QuinLED: http://wled.lan
+server {
+    listen 80;
+    server_name wled.lan;
+    location / {
+        proxy_pass http://192.168.100.10;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection $connection_upgrade;
+        proxy_set_header Host $host;
+        proxy_read_timeout 1d;
+    }
+}
+EOF
+sudo rm /etc/nginx/sites-enabled/default
+sudo ln -s /etc/nginx/sites-available/technolicht /etc/nginx/sites-enabled/
+sudo nginx -t && sudo systemctl reload nginx
+```
+
+The `Upgrade`/`Connection` headers pass WebSockets through — both LedFx and WLED use them for live updates.
+
+**Verify from the phone** (on `TechnoLichtPi-AP`): `http://ledfx.lan` and `http://wled.lan` both open.
+
+### Using a phone on the road
+
+⚠️ **Turn off mobile data.** The hotspot has no internet, so the phone sends traffic over mobile data instead — pages then load forever. With mobile data off (and "Stay connected" / "Use without internet" when prompted), everything works.
+
+If names don't resolve: phone Settings → Private DNS → set to *Automatic* or *Off*. A fixed Private DNS provider bypasses the Pi's DNS.
